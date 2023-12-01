@@ -33,8 +33,8 @@ public class GameController : MonoBehaviour
         _canvas.OnLevelNext += LevelNext;
         _canvas.OnLevelRestart += LevelRestart;
 
-        _level.OnLevelFinish += _canvas.LevelFinish;
-        _level.OnLevelFail += _canvas.LevelFail;
+        _player.OnLevelFinish += _canvas.LevelFinish;
+        _player.OnLevelFail += _canvas.LevelFail;
     }
 
     private void OnDisable()
@@ -43,8 +43,8 @@ public class GameController : MonoBehaviour
         _canvas.OnLevelNext -= LevelNext;
         _canvas.OnLevelRestart -= LevelRestart;
 
-        _level.OnLevelFinish -= _canvas.LevelFinish;
-        _level.OnLevelFail -= _canvas.LevelFail;
+        _player.OnLevelFinish -= _canvas.LevelFinish;
+        _player.OnLevelFail -= _canvas.LevelFail;
     }
 
     private void LevelRestart() =>  LevelLoad(_currentLevel);

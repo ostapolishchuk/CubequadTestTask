@@ -6,11 +6,8 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-    public event Action OnLevelFinish;
-    public event Action OnLevelFail;
-
-    [SerializeField] private float _speed;
-    [SerializeField] private float _speedIncreaseMultiplier;
+    [SerializeField] private float _speed = 1f;
+    [SerializeField] private float _speedIncreaseMultiplier = 1.001f;
     [Space]
     [SerializeField] private PathGenerator _path;
 
@@ -22,14 +19,4 @@ public class LevelController : MonoBehaviour
     { 
     
     }
-
-    public void LevelStart()
-    {
-        
-    }
-
-    public void LevelRestart()
-    { 
-    
-    } 
 }
