@@ -2,6 +2,7 @@ using DG.Tweening;
 using Dreamteck.Splines;
 using System;
 using UnityEngine;
+using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,7 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _speedMultiplier = 1f;
     [SerializeField] private float _limitBorder = 0.1f;
     [Space]
-    [SerializeField] private Animator _animator;
+    [SerializeField] private float _rotatingTime;
+    [Space]
+    [SerializeField] private Animator _animator; 
     [SerializeField] private Transform _camera;
     [Space]
     [SerializeField] private SplinePositioner _positioner;
@@ -23,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private float _speedIncreaseMultiplier;
     private float _offsetLimit;
     private Vector2 _startOffset;
+    private SplineComputer _spline;
 
     private void Update()
     {
@@ -44,34 +48,41 @@ public class PlayerController : MonoBehaviour
             LevelFail();
     }
 
-    public void Init(PathGenerator path, float speed, float speedIncreaseMultiplier)
+    private void OnDestroy()
     {
-        _positioner.spline = path.spline;
+        InputEvents.OnDrag -= Drag;
+        InputEvents.OnTap -= Tap;
+    }
+
+    [Inject]
+    public void Inject(LevelController level)
+    {
+        _positioner.spline = level.path.spline;
 
         _distance = 0;
-        _finishDistance = path.spline.CalculateLength(0, 1);
+        _finishDistance = level.path.spline.CalculateLength(0, 1);
 
         _positioner.SetDistance(_distance);
 
-        _speed = speed * _speedMultiplier;
-        _speedIncreaseMultiplier = speedIncreaseMultiplier;
+        _speed = level.speed * _speedMultiplier;
+        _speedIncreaseMultiplier = level.speedIncreaseMultiplier;
 
-        _offsetLimit = (path.size / 2f) - _limitBorder;
+        _offsetLimit = (level.path.size / 2f) - _limitBorder;
+
+        InputEvents.OnDrag += Drag;
+        InputEvents.OnTap += Tap;
     }
 
     public void LevelStart()
     {
-        InputEvents.OnDrag += Drag;
-        InputEvents.OnTap += Tap;
         _moving = true;
-
         _animator.SetTrigger("Run");
     }
 
     private void LevelFinish()
     {
-        Stop();
-        _animator.transform.DOLocalRotate(new Vector3(0, 180, 0), 0.5f).SetAutoKill(true);
+        _moving = false;
+        _animator.transform.DOLocalRotate(new Vector3(0, 180, 0), _rotatingTime).SetAutoKill(true);
         _animator.SetTrigger("Dance");
 
         OnLevelFinish?.Invoke();
@@ -79,17 +90,10 @@ public class PlayerController : MonoBehaviour
 
     private void LevelFail()
     {
-        Stop();
+        _moving = false;
         _animator.SetTrigger("Idle");
 
         OnLevelFail?.Invoke();
-    }
-
-    private void Stop()
-    {
-        InputEvents.OnDrag -= Drag;
-        InputEvents.OnTap -= Tap;
-        _moving = false;
     }
 
     private void Tap(bool value)
@@ -110,6 +114,6 @@ public class PlayerController : MonoBehaviour
         else if (_positioner.motion.offset.x <= -_offsetLimit)
             _positioner.motion.offset = new Vector2(-_offsetLimit, 0);
 
-            _camera.localPosition = new Vector3(-_positioner.motion.offset.x, _camera.localPosition.y, _camera.localPosition.z);
+        _camera.localPosition = new Vector3(-_positioner.motion.offset.x, _camera.localPosition.y, _camera.localPosition.z);
     }
 }

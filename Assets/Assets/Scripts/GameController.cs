@@ -10,21 +10,20 @@ public class GameController : MonoBehaviour
     private int _totalLevels;
     private CanvasController _canvas;
     private PlayerController _player;
-    private LevelController _level;
 
     [Inject]
-    public void Inject(CanvasController canvas, PlayerController player, LevelController level)
+    public void Inject(CanvasController canvas, PlayerController player)
     {
         _canvas = canvas;
         _player = player;
-        _level = level;
+    }
 
+    private void Awake()
+    {
         _currentLevel = SceneManager.GetActiveScene().buildIndex;
         _totalLevels = SceneManager.sceneCountInBuildSettings;
 
         _canvas.Init(_currentLevel + 1);
-        _player.Init(level.path, level.speed, level.speedIncreaseMultiplier);
-        _level.Init();
     }
 
     private void OnEnable()
@@ -53,7 +52,7 @@ public class GameController : MonoBehaviour
 
     private void LevelLoad(int index)
     {
-        if (index > _totalLevels)
+        if (index > _totalLevels - 1)
             index -= _totalLevels;
 
         SceneManager.LoadScene(index);

@@ -14,9 +14,4 @@ public class LevelController : MonoBehaviour
     public PathGenerator path => _path;
     public float speed => _speed;
     public float speedIncreaseMultiplier => _speedIncreaseMultiplier;
-
-    public void Init()
-    { 
-    
-    }
 }
