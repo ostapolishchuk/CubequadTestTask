@@ -4,4 +4,4 @@
 Unity project version: 2022.3.14f1 LTS <br />
 Date of start: 30.11.2023
 ## Files
-Build.apk - tested Build for Android devices. Minimum Anroid version - 5.1 "Lolipop"
+Build.apk - tested Build for Android devices. Minimum Android version - 5.1 "Lolipop"
